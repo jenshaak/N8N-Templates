@@ -1,0 +1,22 @@
+const data = $json.data;
+
+// Function to extract text from HTML while removing unnecessary spaces
+function extractTextFromHTML(html) {
+  // Remove script, style, and other non-visible tags
+  const cleanedHTML = html
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '') // Remove script tags
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')   // Remove style tags
+    .replace(/<[^>]+>/g, '')                            // Remove all other HTML tags
+    .replace(/\s+/g, ' ')                               // Replace multiple spaces with a single space
+    .trim();                                            // Trim leading and trailing spaces
+  return cleanedHTML;
+}
+
+// Extract text from the input HTML
+const extractedText = extractTextFromHTML(data);
+
+// Log or return the extracted text for debugging
+console.log(extractedText);
+
+// Return the extracted text as output
+return { text: extractedText };
