@@ -1,0 +1,251 @@
+{
+  "name": "PDF Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Generate Contract",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Client's Company Name"
+            },
+            {
+              "fieldLabel": "Contract Duration"
+            },
+            {
+              "fieldLabel": "Setup Fee"
+            },
+            {
+              "fieldLabel": "Monthly Fee"
+            },
+            {
+              "fieldLabel": "Reporting Frequency"
+            },
+            {
+              "fieldLabel": "Client's Name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        80
+      ],
+      "id": "df0c8446-5d0e-4a72-91be-80b93aa46df4",
+      "name": "On form submission",
+      "webhookId": "0228d5c5-97e6-4597-8369-c68742239a3b"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1OHlcGxnu4aQY7sd5FsuxQWpQp-kqRo2K-BD3YNZLupk",
+          "mode": "list",
+          "cachedResultName": "Google Ads Services Contract Template",
+          "cachedResultUrl": "https://docs.google.com/document/d/1OHlcGxnu4aQY7sd5FsuxQWpQp-kqRo2K-BD3YNZLupk/edit?usp=drivesdk"
+        },
+        "name": "=Contract for {{ $json['Client\\'s Company Name'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        860,
+        80
+      ],
+      "id": "c4c3322d-f03b-4833-acef-ced3f23effd2",
+      "name": "Make Copy of Template",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "vOFDXvGsGEgFicby",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "[Client's Company Name]",
+              "replaceText": "={{ $('On form submission').item.json['Client\\'s Company Name'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[Contract Duration]",
+              "replaceText": "={{ $('On form submission').item.json['Contract Duration'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[Setup Fee]",
+              "replaceText": "={{ $('On form submission').item.json['Setup Fee'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[Monthly Fee]",
+              "replaceText": "={{ $('On form submission').item.json['Monthly Fee'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[Reporting Frequency]",
+              "replaceText": "={{ $('On form submission').item.json['Reporting Frequency'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[Client's Name]",
+              "replaceText": "={{ $('On form submission').item.json['Client\\'s Name'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "[date]",
+              "replaceText": "={{ $now.toFormat('MM-dd-yyyy') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        80
+      ],
+      "id": "543cc8fe-3520-41ab-8218-6585ada66ef4",
+      "name": "Change Custom Variables",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "FAUDjxuqJBdQxgDP",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1300,
+        80
+      ],
+      "id": "914c6dc0-f0c6-4715-bed9-ee5e1646287d",
+      "name": "Generate PDF",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "vOFDXvGsGEgFicby",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Make Copy of Template').item.json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1e9AHE0SRoCPur-DHfUG8pA6g4ecwqYBv",
+          "mode": "list",
+          "cachedResultName": "Tutorials",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1e9AHE0SRoCPur-DHfUG8pA6g4ecwqYBv"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        80
+      ],
+      "id": "b9f1c5e9-ff4f-4894-8081-96195d6364da",
+      "name": "Add PDF To Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "vOFDXvGsGEgFicby",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Make Copy of Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Copy of Template": {
+      "main": [
+        [
+          {
+            "node": "Change Custom Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Change Custom Variables": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate PDF": {
+      "main": [
+        [
+          {
+            "node": "Add PDF To Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8c6f0ea1-f90a-4ad8-bca5-4dde1b02c491",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cc6328fe882bfad58b7386aa851c4922bc6b9b3bbc1526f067ce3cffdc2780fb"
+  },
+  "id": "bKAinJa1Dq1KYehY",
+  "tags": []
+}
